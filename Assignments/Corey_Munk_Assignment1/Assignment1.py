@@ -5,16 +5,15 @@ from sklearn.datasets import load_diabetes
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-#%% load diabetes dataset
+#%% load and explore diabetes dataset
 diabetes = load_diabetes()
 diabetes_df = pd.DataFrame(data=diabetes.data, columns=diabetes.feature_names)
 diabetes_df['target'] = diabetes.target
 
-#%% explore dataset
-print(diabetes.keys(), '\n')
-print(diabetes_df.head())
+# print(diabetes.keys(), '\n')
+# print(diabetes_df.head())
 print(diabetes['DESCR'], '\n')
-
+# print(diabetes_df.describe().T)
 #%% create numpy arrays for a single feature and the target
 Feature = diabetes.data[:,2] # I chose bmi since obesity increases risk for diabetes
 Target = diabetes.target
