@@ -1,5 +1,6 @@
 #%%
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_diabetes
 from sklearn.linear_model import LinearRegression
@@ -32,11 +33,12 @@ lm.fit(Feature_train, Target_train)
 #%% use linear regression model to predict target
 Target_predicted = lm.predict(Feature_test)
 MeanSquaredError = mean_squared_error(Target_test, Target_predicted)
+rmse = np.sqrt(MeanSquaredError)
 FeatureCoeff = lm.coef_
 
 print('The first ten predictions are:\n',Target_predicted[:10]) # first ten predictions
 print('The BMI feature coefficient is:',FeatureCoeff)
-print('The linear model RSME is:',MeanSquaredError)
+print('The linear model RSME is:', rmse)
 
 #%% visualize results
 plt.scatter(Feature_test, 

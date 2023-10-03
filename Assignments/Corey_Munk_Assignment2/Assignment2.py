@@ -11,6 +11,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, cross_val_score
+import joblib
 
 #%% load and print description
 diabetes = load_diabetes()
@@ -29,7 +30,7 @@ print(diabetes_df.describe().T)
 diabetes_df.hist(bins=20, figsize=(10,10))
 
 #%% split data for train and test sets
-X = diabetes_df.drop('target', axis=1)
+X = diabetes_df.drop(columns='target')
 y = diabetes_df['target']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=321)
@@ -149,7 +150,26 @@ print(f'Feature Importance:\n {rf1_fi.sort_values(by="Importance", ascending=Fal
 # The feature importance seems to summarize what the correlation matrix tells us by ranking the features in the model.
 
 #%% model evaluation
+# The results are in:
+# - single feature linear model RMSE was 50.478
+# - full feature linear model RMSE was 53.691
+# - decision tree model RMSE was 79.584
+# - random forest model RMSE was 58.612
 
-# Document the best-performing model between the single feature model you trained in 
-# Assignment 1, and the models you trained in part 2 and 3 of this assignment. Evaluate the 
-# best performing model against your test set. Save your model for future use
+# The winner is the single feature linear model. 
+X_bmi = diabetes_df[['target']]
+X_train_bmi, X_test_bmi, y_train_bmi, y_test_bmi = train_test_split(X_bmi, y, test_size=0.2, random_state=321)
+lm_bmi = LinearRegression()
+lm_bmi.fit(X_train_bmi, y_train_bmi)
+y_pred_bmi = lm_bmi.predict(X_test_bmi)
+
+mse_bmi = mean_squared_error(y_test_bmi, y_pred_bmi)
+rmse_bmi = np.sqrt(mse_bmi)
+
+print('*Single Feature Model*')
+print(f'RMSE: {rmse_bmi}')
+
+joblib.dump(lm_bmi, 'bmi_linear_regression_model.pkl') # save model to library for later use
+
+# load_model = joblib.load('bmi_linear_regression_model.pkl')
+# new_preds = load_model.predict(X)
