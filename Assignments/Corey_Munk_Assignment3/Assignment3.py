@@ -11,7 +11,8 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve, roc_auc_score
 
-#%% Part 1 - Data Exploration
+#%% 
+# Part 1 - Data Exploration
 
 # Load data
 data = sns.load_dataset('titanic')
@@ -22,7 +23,6 @@ data.info()
 
 # heatmap of columns with null values
 sns.heatmap(data.isnull(), cbar=False, cmap='plasma')
-#%%
 
 # Did more women or men die on the Titanic?
 male_deaths = data.query("sex == 'male' and survived == 0")
@@ -56,7 +56,8 @@ plt.ylabel('Age')
 plt.title('Age by Class')
 plt.show()
 
-#%% Part 2 - Data Cleansing
+#%% 
+# Part 2 - Data Cleansing
 
 # Drop deck column
 data = data.drop(columns=['deck'])
@@ -107,28 +108,29 @@ X = data.drop(columns='survived')
 y = data['survived'].copy()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=321)
 
-#%% Part 3 - Model Training
+#%% 
+# Part 3 - Model Training
 
 # Logistic Regression Model
-lr_model = LogisticRegression()
+lr_model = LogisticRegression(random_state=321)
 lr_model.fit(X_train, y_train)
 lr_pred = lr_model.predict(X_test)
 lr_probs = lr_model.predict_proba(X_test)[:, 1] #Select probs from positive class (2nd column).
 
 # Support Vector Classifier
-svc_model = SVC(probability=True)
+svc_model = SVC(random_state=321,probability=True)
 svc_model.fit(X_train, y_train)
 svc_pred = svc_model.predict(X_test)
 svc_probs = svc_model.predict_proba(X_test)[:, 1] #Select probs from positive class (2nd column).
 
 # Stochastic Gradient Descent Classifier
-sgd_model = SGDClassifier()
+sgd_model = SGDClassifier(random_state=321)
 sgd_model.fit(X_train, y_train)
 sgd_pred = sgd_model.predict(X_test)
 sgd_scores = sgd_model.decision_function(X_test)
 
 # Classification Reports & Confusion Matricies
-models = [(lr_pred, "***Linear Resgression Metrics***"), 
+models = [(lr_pred, "***Logistic Resgression Metrics***"), 
           (svc_pred, "***Support Vector Metrics***"), 
           (sgd_pred, "***Stochastic Gradient Descent Metrics***")]
 
@@ -152,12 +154,13 @@ generate_ROCplot(y_test, lr_probs, 'Logistic Regression')
 generate_ROCplot(y_test, svc_probs, 'Support Vector')
 generate_ROCplot(y_test, sgd_scores, 'Stochastic Gradient Descent')
 
-#%% Part 4 - Model Tuning
+#%% 
+# Part 4 - Model Tuning
 
 # Create SVC Pipeline
 svc_pipeline = Pipeline([
     ('scalar', StandardScaler()),
-    ('svc', SVC(probability=True))
+    ('svc', SVC(probability=True,random_state=321))
 ])
 
 # Fit Pipeline
@@ -183,7 +186,8 @@ params = {
 #instantiate grid search model
 svc_grid_search = GridSearchCV(estimator=svc_pipeline,
                            param_grid=params,
-                           scoring='roc_auc')
+                           scoring='roc_auc',
+                           random_state=321)
 
 #fit grid search model
 svc_grid_search.fit(X_train, y_train)
@@ -202,7 +206,8 @@ svc_grid_search_probs = svc_grid_search.predict_proba(X_test)[:, 1] #Select prob
 train_sizes, train_scores, test_scores = learning_curve(svc_grid_search.best_estimator_,
                                                         X=X_train,
                                                         y=y_train,
-                                                        scoring='roc_auc')
+                                                        scoring='roc_auc',
+                                                        random_state=321)
 
 plt.plot(train_sizes, np.mean(train_scores, axis=1), color='red', label='Training Score')
 plt.plot(train_sizes, np.mean(test_scores, axis=1), color='green', label='Validation Score')
@@ -211,3 +216,4 @@ plt.xlabel('Training Examples')
 plt.ylabel('Score')
 plt.legend()
 plt.show()
+# %%
