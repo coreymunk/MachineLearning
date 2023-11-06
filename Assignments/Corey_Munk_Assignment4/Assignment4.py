@@ -206,7 +206,7 @@ results_df.sort_values(by='rmse', ascending=True)
 params = {
     'bootstrap': [True, False],
     'max_depth': np.arange(10,111, 11),
-    'max_features': ['auto', 'sqrt'], #{'sqrt', 'log2'}
+    'max_features': ['log2', 'sqrt'], 
     'min_samples_split': [2,5,10],
     'min_samples_leaf': [1,2,4],
     'n_estimators': np.arange(200,2001, 10)
